@@ -1,11 +1,8 @@
 package com.frmeta.fashion.fashion.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frmeta.fashion.fashion.repository.ListingRepository;
 import com.frmeta.fashion.fashion.model.Listing;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +26,17 @@ public class ListingService {
         }
     }
 
-    public Listing save(String jsonString) throws JsonProcessingException {
-        ObjectMapper om = new ObjectMapper();
-        Listing listing = om.readValue(jsonString, Listing.class);
-        return listingRepository.save(listing);
-    }
-
     public Listing save(Listing listing){
-        listingRepository.save(listing);
-        return listing;
+        if (listingRepository.existsById(listing.getId())){
+            try{
+                return listingRepository.save(listing);
+            } catch (DataIntegrityViolationException e){
+                return null;
+            }
+
+        } else {
+            return null;
+        }
     }
 
     public void delete(Long id){

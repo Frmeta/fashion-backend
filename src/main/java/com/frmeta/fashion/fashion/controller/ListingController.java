@@ -2,10 +2,8 @@ package com.frmeta.fashion.fashion.controller;
 
 import com.frmeta.fashion.fashion.service.ListingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.frmeta.fashion.fashion.model.Listing;
 import java.util.List;
@@ -24,23 +22,26 @@ public class ListingController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Listing> create(@RequestBody Listing listing){
+    public ResponseEntity<Object> create(@RequestBody Listing listing){
         //listingService.create(new Listing("hoho", "url", 12, 123123L, "besar", "baru lah"));
         Listing l = listingService.create(listing);
 
         if (l == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("tidak boleh ada atribut yang null", HttpStatus.BAD_REQUEST);
         } else{
-            return ResponseEntity.ok(listing);
+            return ResponseEntity.ok(l);
         }
 
 
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Listing> save(@RequestBody Listing listing){
-        listingService.save(listing);
-        return ResponseEntity.ok(listing);
+    public ResponseEntity<Object> save(@RequestBody Listing listing){
+        Listing out = listingService.save(listing);
+        if (out == null){
+            return new ResponseEntity<>("ada masalah, sepertinya karena ada atribut yang null atau mungkin tidak ada listing dengan id " + listing.getId(), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(out);
     }
 
     @DeleteMapping("/{id}")
@@ -48,11 +49,4 @@ public class ListingController {
         listingService.delete(id);
         return ResponseEntity.ok("successfuly deleted");
     }
-//    @PostMapping("/save")
-//    public String save(@RequestBody Listing){
-//        //TODO: Terima string json
-//        String jsonString = "lolol";
-//        // listingService.save(jsonString);
-//        return "congrats";
-//    }
 }
