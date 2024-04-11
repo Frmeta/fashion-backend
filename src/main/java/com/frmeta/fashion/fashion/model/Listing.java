@@ -12,6 +12,7 @@ import lombok.Setter;
 public class Listing {
 
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
